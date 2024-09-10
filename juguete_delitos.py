@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Configuración de la aplicación
-st.title('Aplicación de Juguete de un metiroso')
+st.title('Aplicación de Datos de Delitos')
 
 # Definir los posibles valores para las columnas
 ciudades = ['Ciudad A', 'Ciudad B', 'Ciudad C', 'Ciudad D']
@@ -23,12 +23,25 @@ data = {
 
 df = pd.DataFrame(data)
 
-st.write("### Dataset Generado")
-st.write(df.head())
+# Sidebar para filtros
+st.sidebar.header('segmentador')
+selected_ciudad = st.sidebar.multiselect('Selecciona la ciudad', ciudades, default=ciudades)
+selected_hora = st.sidebar.slider('Selecciona la hora del día', 0, 23, (0, 23))
+selected_dia = st.sidebar.multiselect('Selecciona el día de la semana', dias_semana, default=dias_semana)
+
+# Aplicar filtros al dataframe
+filtered_df = df[
+    (df['Ciudad'].isin(selected_ciudad)) &
+    (df['Hora del día'].between(selected_hora[0], selected_hora[1])) &
+    (df['Día de la semana'].isin(selected_dia))
+]
+
+st.write("### Dataset Filtrado")
+st.write(filtered_df)
 
 # Graficar la distribución de frecuencia de la ciudad
 st.write("### Distribución de Frecuencia por Ciudad")
-ciudad_counts = df['Ciudad'].value_counts()
+ciudad_counts = filtered_df['Ciudad'].value_counts()
 plt.figure(figsize=(10, 5))
 sns.barplot(x=ciudad_counts.index, y=ciudad_counts.values, palette='viridis')
 plt.title('Número de Delitos por Ciudad')
@@ -39,7 +52,7 @@ plt.clf()
 
 # Graficar la distribución de frecuencia de los tipos de delito
 st.write("### Distribución de Frecuencia por Tipo de Delito")
-delito_counts = df['Tipo de delito'].value_counts()
+delito_counts = filtered_df['Tipo de delito'].value_counts()
 plt.figure(figsize=(10, 5))
 sns.barplot(x=delito_counts.index, y=delito_counts.values, palette='viridis')
 plt.title('Número de Delitos por Tipo')
@@ -51,10 +64,11 @@ plt.clf()
 # Graficar la distribución de tipos de delito por día de la semana
 st.write("### Tipo de Delito por Día de la Semana")
 plt.figure(figsize=(12, 6))
-sns.countplot(data=df, x='Día de la semana', hue='Tipo de delito', palette='viridis')
+sns.countplot(data=filtered_df, x='Día de la semana', hue='Tipo de delito', palette='viridis')
 plt.title('Número de Delitos por Día de la Semana y Tipo')
 plt.xlabel('Día de la Semana')
 plt.ylabel('Número de Delitos')
 plt.legend(title='Tipo de Delito')
 st.pyplot(plt.gcf())
 plt.clf()
+
