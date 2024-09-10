@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Configuración de la aplicación
-st.title('Aplicación de Juguete de delitos')
+st.title('Aplicación de Juguete de un metiroso')
 
 # Definir los posibles valores para las columnas
 ciudades = ['Ciudad A', 'Ciudad B', 'Ciudad C', 'Ciudad D']
